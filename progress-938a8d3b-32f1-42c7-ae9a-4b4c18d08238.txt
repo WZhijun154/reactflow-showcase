@@ -1,0 +1,64 @@
+# Progress Log
+Run: 938a8d3b-32f1-42c7-ae9a-4b4c18d08238
+Task: Build a React Flow showcase application
+Started: 2026-03-13 14:40 GMT+8
+
+## Codebase Patterns
+- **Framework:** Next.js 16 (App Router) with TypeScript, Tailwind CSS 4
+- **Tailwind setup:** Uses `@tailwindcss/postcss` plugin (v4 style), import via `@import "tailwindcss"` in globals.css
+- **Tailwind dark mode:** Uses `@custom-variant dark (&:where(.dark, .dark *))` in globals.css
+- **Static export:** `output: "export"` in next.config.ts, images must be `unoptimized: true`
+- **basePath:** `/reactflow-showcase` — all links and assets must account for this
+- **Google Fonts:** Removed — incompatible with static export. Use system fonts.
+- **React Flow:** `@xyflow/react` v12 — import from `@xyflow/react`, styles from `@xyflow/react/dist/style.css`
+- **React Flow client component:** Pages using ReactFlow MUST have `"use client"` directive
+- **Path alias:** `@/*` maps to `./src/*`
+- **Tests:** `node:test` runner with `.test.mts` files in `tests/` directory, run via `npm test`
+- **Typecheck:** `npx tsc --noEmit` or `npm run typecheck`
+- **Build:** `npm run build` → static output in `out/`
+- **Repo:** github.com/WZhijun154/reactflow-showcase
+- **Branch:** feature/reactflow-showcase
+- **Layout architecture:** Sidebar (desktop, md+) + MobileNav (mobile, <md) + DiagramContainer (main area)
+- **Component organization:** Layout components in `src/components/layout/`, constants in `src/constants/`
+- **State management:** React useState in page.tsx for active diagram; pass as props to Sidebar/MobileNav/DiagramContainer
+- **Diagram definitions:** All 10 diagram types defined in `src/constants/diagrams.ts` with id, title, description, icon
+- **Theme:** ThemeProvider in `src/app/providers/ThemeProvider.tsx`, ThemeToggle in `src/components/ThemeToggle.tsx`
+- **Responsive pattern:** `hidden md:flex` for desktop-only, `md:hidden` for mobile-only, `md:ml-64` for sidebar offset
+
+---
+
+## 2026-03-13 14:42 - US-001: Scaffold Next.js project with React Flow and Tailwind CSS
+- Configured next.config.ts: output: "export", basePath: "/reactflow-showcase", assetPrefix, unoptimized images
+- Replaced default layout.tsx — removed Google Fonts (breaks static export), added React Flow Showcase metadata
+- Created page.tsx as client component with sample ReactFlow diagram (3 nodes, 2 animated edges, Controls, MiniMap, Background)
+- Simplified globals.css with Tailwind v4 import and CSS custom properties for theming
+- Updated README.md with project overview, tech stack, setup instructions, and diagram types list
+- Added test and typecheck scripts to package.json
+- Created 29 scaffold verification tests in tests/scaffold.test.mts using node:test
+- Build verified: produces static export in /out directory
+- GitHub repo created: WZhijun154/reactflow-showcase, both main and feature branch pushed
+- Files changed: next.config.ts, package.json, src/app/globals.css, src/app/layout.tsx, src/app/page.tsx, README.md, tests/scaffold.test.mts
+- **Learnings:** Next.js 16 uses Turbopack for builds. Google font imports break static export — use system fonts instead.
+---
+
+## 2026-03-13 14:51 - US-002: Add dark mode support with theme toggle
+- Created ThemeProvider with React Context, localStorage persistence, and prefers-color-scheme detection
+- Created ThemeToggle button with sun/moon SVG icons
+- Added @custom-variant dark directive for Tailwind v4 class-based dark mode
+- Layout wraps children in ThemeProvider with suppressHydrationWarning
+- Files changed: src/app/providers/ThemeProvider.tsx, src/components/ThemeToggle.tsx, src/app/globals.css, src/app/layout.tsx, src/app/page.tsx
+---
+
+## 2026-03-13 15:05 - US-003: Build responsive layout with sidebar navigation and diagram container
+- Created `src/constants/diagrams.ts` with DiagramDefinition interface and 10 diagram entries (flowchart, architecture, data-flow, concept-map, org-chart, mind-map, state-machine, network-topology, er-diagram, workflow) — each with id, title, description, icon
+- Created `src/components/layout/Sidebar.tsx` — fixed sidebar (w-64) on desktop (md+), hidden on mobile, renders all 10 diagram types with icons, highlights active item with blue accent and aria-current, has nav landmark
+- Created `src/components/layout/MobileNav.tsx` — dropdown select visible only on mobile (<md), renders all diagram options with icons, labeled for accessibility
+- Created `src/components/layout/DiagramContainer.tsx` — shows selected diagram title, description, icon, and "coming soon" placeholder in a bordered container (min-h-[400px])
+- Updated `src/app/page.tsx` — replaced old sample ReactFlow diagram with new layout: Sidebar + main content area (md:ml-64) with header (ThemeToggle), MobileNav, and DiagramContainer; uses useState for activeDiagramId
+- Updated `tests/scaffold.test.mts` — adapted 2 tests that expected ReactFlow/Controls/MiniMap imports directly in page.tsx (now imports layout components instead)
+- Created `tests/layout.test.mts` — 41 tests covering: diagrams.ts exports (6), Sidebar component (8), MobileNav component (8), DiagramContainer component (6), main page integration (10), dark mode support in all layout components (3)
+- All dark mode classes applied to all new components
+- Build passes, typecheck passes, all 101 tests pass (0 failures)
+- Files changed: src/constants/diagrams.ts, src/components/layout/Sidebar.tsx, src/components/layout/MobileNav.tsx, src/components/layout/DiagramContainer.tsx, src/app/page.tsx, tests/layout.test.mts, tests/scaffold.test.mts
+- **Learnings:** When the page architecture changes (e.g., from inline ReactFlow to layout components), existing scaffold tests may break — update them to match the new structure.
+---

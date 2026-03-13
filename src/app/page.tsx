@@ -1,67 +1,46 @@
 "use client";
 
-import { ReactFlow, Background, Controls, MiniMap } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
+import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-
-const sampleNodes = [
-  {
-    id: "1",
-    position: { x: 250, y: 0 },
-    data: { label: "React Flow Showcase" },
-    type: "input",
-  },
-  {
-    id: "2",
-    position: { x: 100, y: 100 },
-    data: { label: "Interactive Diagrams" },
-  },
-  {
-    id: "3",
-    position: { x: 400, y: 100 },
-    data: { label: "Multiple Diagram Types" },
-  },
-];
-
-const sampleEdges = [
-  { id: "e1-2", source: "1", target: "2", animated: true },
-  { id: "e1-3", source: "1", target: "3", animated: true },
-];
+import { Sidebar } from "@/components/layout/Sidebar";
+import { MobileNav } from "@/components/layout/MobileNav";
+import { DiagramContainer } from "@/components/layout/DiagramContainer";
+import { diagrams } from "@/constants/diagrams";
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen flex-col items-center bg-zinc-50 dark:bg-zinc-900">
-      <header className="relative w-full bg-white py-8 text-center shadow-sm transition-colors duration-200 dark:bg-zinc-800">
-        <div className="absolute right-4 top-4">
-          <ThemeToggle />
-        </div>
-        <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-50">
-          React Flow Showcase
-        </h1>
-        <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
-          Interactive diagram demonstrations powered by React Flow
-        </p>
-      </header>
+  const [activeDiagramId, setActiveDiagramId] = useState(diagrams[0].id);
 
-      <main className="flex w-full max-w-6xl flex-1 flex-col items-center px-4 py-8">
-        <section className="w-full rounded-lg bg-white p-4 shadow-md transition-colors duration-200 dark:bg-zinc-800">
-          <h2 className="mb-4 text-2xl font-semibold text-zinc-800 transition-colors duration-200 dark:text-zinc-200">
-            Sample Diagram
+  const activeDiagram =
+    diagrams.find((d) => d.id === activeDiagramId) ?? diagrams[0];
+
+  return (
+    <div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-900 transition-colors duration-200">
+      {/* Sidebar — desktop only */}
+      <Sidebar
+        activeDiagramId={activeDiagramId}
+        onSelectDiagram={setActiveDiagramId}
+      />
+
+      {/* Main content area */}
+      <div className="flex flex-col flex-1 md:ml-64 min-h-screen">
+        {/* Top bar with theme toggle */}
+        <header className="flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700 shadow-sm transition-colors duration-200 md:px-6">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50 md:hidden">
+            React Flow Showcase
           </h2>
-          <div className="h-96 w-full rounded border border-zinc-200 dark:border-zinc-700">
-            <ReactFlow
-              nodes={sampleNodes}
-              edges={sampleEdges}
-              fitView
-              proOptions={{ hideAttribution: true }}
-            >
-              <Background />
-              <Controls />
-              <MiniMap />
-            </ReactFlow>
-          </div>
-        </section>
-      </main>
+          <div className="hidden md:block" />
+          <ThemeToggle />
+        </header>
+
+        {/* Mobile navigation — mobile only */}
+        <MobileNav
+          activeDiagramId={activeDiagramId}
+          onSelectDiagram={setActiveDiagramId}
+        />
+
+        {/* Diagram display area */}
+        <DiagramContainer diagram={activeDiagram} />
+      </div>
     </div>
   );
 }

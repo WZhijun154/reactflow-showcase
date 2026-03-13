@@ -127,16 +127,19 @@ describe("US-001: Project Scaffold", () => {
       );
     });
 
-    it("imports ReactFlow", () => {
+    it("imports layout components (Sidebar, MobileNav, DiagramContainer)", () => {
       assert.ok(
-        page.includes("ReactFlow"),
-        "page.tsx should import ReactFlow"
+        page.includes("Sidebar"),
+        "page.tsx should import Sidebar component"
       );
-    });
-
-    it("imports Controls and MiniMap", () => {
-      assert.ok(page.includes("Controls"), "page.tsx should import Controls");
-      assert.ok(page.includes("MiniMap"), "page.tsx should import MiniMap");
+      assert.ok(
+        page.includes("MobileNav"),
+        "page.tsx should import MobileNav component"
+      );
+      assert.ok(
+        page.includes("DiagramContainer"),
+        "page.tsx should import DiagramContainer component"
+      );
     });
 
     it("renders React Flow Showcase heading", () => {
