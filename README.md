@@ -47,7 +47,7 @@ npm run lint
 
 This project is configured for automatic deployment to GitHub Pages via GitHub Actions. Push to `main` or `feature/reactflow-showcase` to trigger a deployment.
 
-The live site is available at: [https://WZhijun154.github.io/reactflow-showcase](https://WZhijun154.github.io/reactflow-showcase)
+**🔗 Live Demo:** [https://wzhijun154.github.io/reactflow-showcase/](https://wzhijun154.github.io/reactflow-showcase/)
 
 ## Diagram Types
 
