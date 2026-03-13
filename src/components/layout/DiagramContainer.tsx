@@ -3,6 +3,7 @@
 import type { DiagramDefinition } from "@/constants/diagrams";
 import { DiagramWrapper } from "@/components/diagrams/DiagramWrapper";
 import { FlowchartDiagram } from "@/components/diagrams/flowchart/FlowchartDiagram";
+import { ArchitectureDiagram } from "@/components/diagrams/architecture/ArchitectureDiagram";
 import { placeholderNodes, placeholderEdges } from "@/constants/placeholderData";
 
 interface DiagramContainerProps {
@@ -13,6 +14,8 @@ function DiagramRenderer({ diagramId }: { diagramId: string }) {
   switch (diagramId) {
     case "flowchart":
       return <FlowchartDiagram />;
+    case "architecture":
+      return <ArchitectureDiagram />;
     default:
       return (
         <DiagramWrapper
