@@ -24,6 +24,9 @@ Started: 2026-03-13 14:40 GMT+8
 - **Custom shapes via CSS:** Use `clipPath` with `polygon()` for hexagons, parallelograms, etc. Use rounded ellipses (`rounded-[50%]`) for cylinder shapes. Tailwind `transition-all hover:scale-105` for hover effects.
 - **Edge styles:** Sync edges use solid `strokeWidth: 2` with color. Async edges add `strokeDasharray: "6 3"`. Use `markerEnd: { type: "arrowclosed", color }` for arrow markers.
 - **Tier-based coloring:** Use a `tierColors` lookup object mapping tier names to Tailwind class strings (bg, border, badge) for consistent color theming.
+- **Category coloring pattern:** Use a `categoryColors` lookup object mapping category names to `{ bg, border, text }` Tailwind classes. Works for concept maps, org charts, and other category-based diagrams.
+- **Importance/size-based styling:** Use an `importanceSizes` lookup mapping importance levels to Tailwind class strings for varying node sizes (min-w, padding, text-size).
+- **Barrel exports:** Each diagram's `nodes/` directory has an `index.ts` barrel file re-exporting all node components.
 
 ---
 
@@ -107,4 +110,31 @@ Started: 2026-03-13 14:40 GMT+8
 - Commit: 58eedfe
 - Files changed: src/components/diagrams/architecture/*, src/components/layout/DiagramContainer.tsx, src/data/architecture.ts, tests/architecture.test.mts
 - **Learnings:** CSS clipPath with polygon() is effective for non-rectangular node shapes (hexagons, parallelograms). Each node needs multiple handles (top/bottom/left/right) with named IDs for flexible edge routing. Tier-based color lookup objects keep styling consistent across nodes.
+---
+
+## 2026-03-13 15:55 - US-007: Implement Data Flow and Concept Map diagrams
+- Created 4 custom DataFlow node types in src/components/diagrams/dataflow/nodes/:
+  - SourceNode: blue rounded, shows format badge (CSV/JSON/SQL), source handle right
+  - TransformNode: amber rounded-xl with ⚙️ icon, shows operation badge, handles left/right/bottom
+  - LoadNode: green rounded-xl with 📥 icon, shows destination badge (Snowflake/ClickHouse)
+  - StorageNode: indigo cylinder shape with 🗄️ icon, shows storageType badge (S3/Metabase)
+- Created src/data/dataflow.ts with 12 nodes (3 sources, 5 transforms, 2 loads, 2 storage) and 13 edges
+  - ETL pipeline: CSV/API/DB sources → Parse → Validate → Deduplicate/Enrich → Aggregate → Warehouse/Analytics → Dashboard
+  - Animated directional edges showing data movement
+  - Gradient coloring: blue (source) → amber (transform) → green (load), indigo for storage
+  - Dashed edges for checkpoint/staging side-paths
+- Created ConceptNode in src/components/diagrams/conceptmap/nodes/:
+  - Rounded-full shape with varying sizes by importance (high=160px, medium=130px, low=100px)
+  - Category-based pastel colors: rose (core), sky (paradigm), violet (algorithm), emerald (application), amber (technique)
+  - 8 handles (4 target + 4 source at top/right/bottom/left) for flexible edge connections
+- Created src/data/conceptmap.ts with 15 nodes and 18 edges
+  - Machine Learning concepts: ML → Supervised/Unsupervised/Reinforcement → algorithms (Neural Networks, Decision Trees, SVM, Clustering, Deep Learning) → applications (NLP, Computer Vision, Recommendation Systems) + techniques (Feature Engineering, Cross-Validation, Transfer Learning)
+  - Bezier curve edges (default type) with relationship labels: includes, uses, enables, powers, requires, evaluated by, combined with
+  - Cross-connections between applications with dashed lines
+- Wired both into DiagramContainer: "data-flow" → DataFlowDiagram, "concept-map" → ConceptMapDiagram
+- 32 tests in tests/dataflow.test.mts, 30 tests in tests/conceptmap.test.mts
+- All 258 tests pass, typecheck clean, build succeeds
+- Commit: ae37612
+- Files changed: src/components/diagrams/dataflow/*, src/components/diagrams/conceptmap/*, src/components/layout/DiagramContainer.tsx, src/data/dataflow.ts, src/data/conceptmap.ts, tests/dataflow.test.mts, tests/conceptmap.test.mts
+- **Learnings:** Category-based color lookup objects (categoryColors) work well for concept maps with multiple topic categories. Importance-based size maps (importanceSizes) let you vary node prominence. Rounded-full nodes work best for concept maps, giving an organic bubble look.
 ---
