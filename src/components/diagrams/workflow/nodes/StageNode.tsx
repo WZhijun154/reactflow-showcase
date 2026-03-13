@@ -45,7 +45,7 @@ export function StageNode({ data }: NodeProps) {
 
   return (
     <div
-      className={`min-w-[180px] px-4 py-3 rounded-lg border-2 shadow-md transition-all hover:shadow-lg hover:scale-105 ${config.bg} ${config.border}`}
+      className={`min-w-[180px] px-4 py-3 rounded-lg border-2 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 ${config.bg} ${config.border}`}
     >
       <Handle
         type="target"

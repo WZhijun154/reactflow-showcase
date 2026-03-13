@@ -13,7 +13,7 @@ export function LoadBalancerNode({ data }: NodeProps) {
   const nodeData = data as LoadBalancerNodeData;
 
   return (
-    <div className="min-w-[150px] px-3 py-2.5 rounded-lg border-2 border-emerald-400 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950 shadow-md transition-all hover:shadow-lg hover:scale-105"
+    <div className="min-w-[150px] px-3 py-2.5 rounded-lg border-2 border-emerald-400 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105"
       style={{ clipPath: "polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)" }}
     >
       <Handle

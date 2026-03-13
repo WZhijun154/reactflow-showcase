@@ -13,7 +13,7 @@ export function CloudNode({ data }: NodeProps) {
   const nodeData = data as CloudNodeData;
 
   return (
-    <div className="min-w-[130px] px-4 py-3 rounded-2xl border-2 border-sky-400 dark:border-sky-500 bg-sky-50 dark:bg-sky-950 shadow-md transition-all hover:shadow-lg hover:scale-105">
+    <div className="min-w-[130px] px-4 py-3 rounded-2xl border-2 border-sky-400 dark:border-sky-500 bg-sky-50 dark:bg-sky-950 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105">
       <Handle
         type="target"
         position={Position.Top}

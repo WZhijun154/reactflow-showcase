@@ -12,7 +12,7 @@ export function FirewallNode({ data }: NodeProps) {
   const nodeData = data as FirewallNodeData;
 
   return (
-    <div className="min-w-[140px] px-4 py-3 rounded-lg border-2 border-red-500 dark:border-red-400 bg-red-50 dark:bg-red-950 shadow-md transition-all hover:shadow-lg hover:scale-105">
+    <div className="min-w-[140px] px-4 py-3 rounded-lg border-2 border-red-500 dark:border-red-400 bg-red-50 dark:bg-red-950 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105">
       <Handle
         type="target"
         position={Position.Top}

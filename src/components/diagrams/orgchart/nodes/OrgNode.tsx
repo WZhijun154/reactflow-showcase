@@ -48,7 +48,7 @@ export function OrgNode({ data }: NodeProps) {
 
   return (
     <div
-      className={`rounded-xl border-2 ${colors.border} bg-white dark:bg-zinc-800 shadow-lg min-w-[160px] transition-all hover:shadow-xl hover:scale-105`}
+      className={`rounded-xl border-2 ${colors.border} bg-white dark:bg-zinc-800 shadow-lg min-w-[160px] transition-all duration-200 hover:shadow-xl hover:scale-105`}
     >
       <Handle
         type="target"

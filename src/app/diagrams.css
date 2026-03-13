@@ -1,0 +1,89 @@
+/* ============================================================
+   Shared animation & interaction styles for React Flow diagrams
+   US-011: Smooth animations, interaction polish, edge styling
+   ============================================================ */
+
+/* ---- Fade-in entrance animation for diagram transitions ---- */
+@keyframes diagram-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.diagram-enter {
+  animation: diagram-fade-in 0.3s ease-out both;
+}
+
+/* ---- React Flow node base interaction styles ---- */
+
+/* Selected node glow — applied by React Flow via .selected class */
+.react-flow__node.selected > div,
+.react-flow__node.selected > div > div {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5), 0 4px 12px rgba(99, 102, 241, 0.25) !important;
+}
+
+:where(.dark) .react-flow__node.selected > div,
+:where(.dark) .react-flow__node.selected > div > div {
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.6), 0 4px 12px rgba(129, 140, 248, 0.3) !important;
+}
+
+/* ---- Edge hover interactivity ---- */
+
+/* Base edge transition */
+.react-flow__edge path {
+  transition: stroke-width 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
+}
+
+/* Edge hover — thicker stroke + glow */
+.react-flow__edge:hover path {
+  stroke-width: 3.5 !important;
+  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.4));
+}
+
+:where(.dark) .react-flow__edge:hover path {
+  filter: drop-shadow(0 0 6px rgba(129, 140, 248, 0.5));
+}
+
+/* Animated edges — keep smooth animation */
+.react-flow__edge.animated path {
+  stroke-dasharray: 5;
+  animation: react-flow-edge-dash 0.5s linear infinite;
+}
+
+@keyframes react-flow-edge-dash {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+/* ---- Node hover base style — applied via Tailwind classes on components ----
+   All custom nodes should use: transition-all duration-200
+   Hover effects are handled per-node via Tailwind hover: utilities.
+   The styles below provide fallback for any node wrapper. ---- */
+
+.react-flow__node {
+  transition: filter 0.2s ease;
+}
+
+.react-flow__node:hover {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.12));
+}
+
+:where(.dark) .react-flow__node:hover {
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.08));
+}
+
+/* Ensure smooth pan/zoom — use GPU layer for the viewport */
+.react-flow__viewport {
+  will-change: transform;
+}
+
+/* Smooth MiniMap transitions */
+.react-flow__minimap {
+  transition: opacity 0.2s ease;
+}

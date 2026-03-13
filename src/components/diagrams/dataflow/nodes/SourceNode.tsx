@@ -13,7 +13,7 @@ export function SourceNode({ data }: NodeProps) {
   const nodeData = data as SourceNodeData;
 
   return (
-    <div className="px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-950 border-2 border-blue-400 dark:border-blue-500 shadow-lg min-w-[140px] text-center transition-all hover:shadow-xl hover:scale-105">
+    <div className="px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-950 border-2 border-blue-400 dark:border-blue-500 shadow-lg min-w-[140px] text-center transition-all duration-200 hover:shadow-xl hover:scale-105">
       {nodeData.icon && (
         <div className="text-2xl mb-1">{nodeData.icon}</div>
       )}

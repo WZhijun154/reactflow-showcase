@@ -12,7 +12,7 @@ export function ParallelNode({ data }: NodeProps) {
   const nodeData = data as ParallelNodeData;
 
   return (
-    <div className="min-w-[180px] px-4 py-3 rounded-xl border-2 border-dashed border-indigo-400 dark:border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 shadow-md transition-all hover:shadow-lg hover:scale-105">
+    <div className="min-w-[180px] px-4 py-3 rounded-xl border-2 border-dashed border-indigo-400 dark:border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105">
       <Handle
         type="target"
         position={Position.Top}

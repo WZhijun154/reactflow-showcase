@@ -12,7 +12,7 @@ export function StorageNode({ data }: NodeProps) {
   const nodeData = data as StorageNodeData;
 
   return (
-    <div className="relative px-4 py-3 min-w-[140px] text-center transition-all hover:shadow-xl hover:scale-105">
+    <div className="relative px-4 py-3 min-w-[140px] text-center transition-all duration-200 hover:shadow-xl hover:scale-105">
       <Handle
         type="target"
         position={Position.Top}

@@ -23,7 +23,7 @@ export function ServiceNode({ data }: NodeProps) {
 
   return (
     <div
-      className={`px-4 py-3 rounded-xl ${colors.bg} ${colors.border} border-2 shadow-lg min-w-[150px] text-center transition-all hover:shadow-xl hover:scale-105`}
+      className={`px-4 py-3 rounded-xl ${colors.bg} ${colors.border} border-2 shadow-lg min-w-[150px] text-center transition-all duration-200 hover:shadow-xl hover:scale-105`}
     >
       <Handle
         type="target"

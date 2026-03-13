@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { DiagramDefinition } from "@/constants/diagrams";
 import { DiagramWrapper } from "@/components/diagrams/DiagramWrapper";
 import { FlowchartDiagram } from "@/components/diagrams/flowchart/FlowchartDiagram";
@@ -52,6 +53,13 @@ function DiagramRenderer({ diagramId }: { diagramId: string }) {
 }
 
 export function DiagramContainer({ diagram }: DiagramContainerProps) {
+  // Re-trigger fade-in animation when diagram changes
+  const [animKey, setAnimKey] = useState(0);
+
+  useEffect(() => {
+    setAnimKey((prev) => prev + 1);
+  }, [diagram.id]);
+
   return (
     <div className="flex flex-col flex-1 min-h-0">
       <div className="px-4 pt-4 pb-2 sm:px-6">
@@ -68,7 +76,10 @@ export function DiagramContainer({ diagram }: DiagramContainerProps) {
         </p>
       </div>
 
-      <div className="flex-1 m-4 sm:m-6 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm transition-colors duration-200 overflow-hidden min-h-[400px]">
+      <div
+        key={animKey}
+        className="diagram-enter flex-1 m-4 sm:m-6 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm transition-colors duration-200 overflow-hidden min-h-[400px]"
+      >
         <DiagramRenderer diagramId={diagram.id} />
       </div>
     </div>

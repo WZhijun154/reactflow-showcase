@@ -12,7 +12,7 @@ export function DatabaseNode({ data }: NodeProps) {
   const nodeData = data as DatabaseNodeData;
 
   return (
-    <div className="relative flex flex-col items-center min-w-[130px] transition-all hover:scale-105">
+    <div className="relative flex flex-col items-center min-w-[130px] shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105">
       <Handle
         type="target"
         position={Position.Top}

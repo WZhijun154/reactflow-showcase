@@ -17,22 +17,9 @@ Started: 2026-03-13 14:40 GMT+8
 - **Build:** `npm run build` → static output in `out/`
 - **Repo:** github.com/WZhijun154/reactflow-showcase
 - **Branch:** feature/reactflow-showcase
-- **Diagram wiring:** DiagramContainer uses a `switch` on `diagram.id` to render the correct diagram component. Each new diagram type needs a case in DiagramContainer.tsx.
-- **Custom node pattern:** Create `src/components/diagrams/<type>/nodes/` directory with individual node components. Each node receives `NodeProps` from `@xyflow/react` and uses `Handle` for connections. Register in a `nodeTypes` object (must be defined outside the component or memoized to avoid re-renders).
-- **Diagram data pattern:** Create `src/data/<type>.ts` exporting typed `Node[]` and `Edge[]` arrays. Use `type` field on nodes to match custom `nodeTypes` keys.
-- **Node type casting:** Node `data` prop is typed as `Record<string, unknown>`. Cast to a specific interface inside the component: `const nodeData = data as MyNodeData`.
-- **Custom shapes via CSS:** Use `clipPath` with `polygon()` for hexagons, parallelograms, etc. Use rounded ellipses (`rounded-[50%]`) for cylinder shapes. Tailwind `transition-all hover:scale-105` for hover effects.
-- **Edge styles:** Sync edges use solid `strokeWidth: 2` with color. Async edges add `strokeDasharray: "6 3"`. Use `markerEnd: { type: "arrowclosed", color }` for arrow markers.
-- **Tier-based coloring:** Use a `tierColors` lookup object mapping tier names to Tailwind class strings (bg, border, badge) for consistent color theming.
-- **Category coloring pattern:** Use a `categoryColors` lookup object mapping category names to `{ bg, border, text }` Tailwind classes. Works for concept maps, org charts, and other category-based diagrams.
-- **Importance/size-based styling:** Use an `importanceSizes` lookup mapping importance levels to Tailwind class strings for varying node sizes (min-w, padding, text-size).
-- **Barrel exports:** Each diagram's `nodes/` directory has an `index.ts` barrel file re-exporting all node components.
-- **Level-based coloring:** Use a `levelColors` lookup object mapping hierarchy level numbers to `{ border, accent, avatar }` Tailwind class strings. Works for org charts and hierarchical diagrams.
-- **Avatar initials:** Use a `getInitials()` helper to extract first letters from a name for avatar placeholders.
-- **Depth-based sizing:** Use a `depthStyles` lookup mapping depth levels to `{ bg, border, text, size }` Tailwind class strings for nodes that decrease in size with depth (e.g., mind maps).
-- **Zone-based coloring:** Use a `zoneColors` lookup mapping zone names (external, dmz, internal) to `{ border, badge }` Tailwind class strings. Works for network diagrams with security zones.
-- **State machine node types:** Use distinct visual styles per state type: initial (filled circle, source-only handle), regular (rounded rectangle with label+description), final (double circle, target-only handle).
-- **Handle direction semantics:** Initial/start nodes have only source handles. Final/end nodes have only target handles. Regular nodes have both. Use named handle IDs (e.g., "right", "left") for non-standard edge routing.
+- **Diagram pattern:** Each diagram has: data file in `src/data/`, custom node components in `src/components/diagrams/<name>/nodes/` with barrel `index.ts`, main diagram component using `DiagramWrapper`, wired into `DiagramContainer.tsx` switch
+- **Node component pattern:** `"use client"`, import Handle/Position from @xyflow/react, interface for data, dark mode classes, hover effects (shadow + scale), handles for source/target
+- **Data file pattern:** Export typed `Node[]` and `Edge[]` arrays, use smoothstep edge type, color-coded edges, animated for active paths
 
 ---
 
@@ -50,106 +37,19 @@ Started: 2026-03-13 14:40 GMT+8
 - **Learnings:** Next.js 16 uses Turbopack for builds. Google font imports break static export — use system fonts instead.
 ---
 
-## 2026-03-13 14:50 - US-002: Add dark mode support with theme toggle
-- Created ThemeProvider with React context, localStorage persistence, system preference detection
-- Created ThemeToggle button component with sun/moon SVG icons
-- Updated globals.css with @custom-variant dark, CSS variables for dark mode
-- Integrated ThemeProvider into layout.tsx, ThemeToggle into header
-- Tests in tests/darkmode.test.mts
----
-
-## 2026-03-13 15:00 - US-003: Build responsive layout with sidebar navigation and diagram container
-- Created Sidebar component (desktop, md: breakpoint, fixed left 64-width)
-- Created MobileNav component (select dropdown, visible below md:)
-- Created DiagramContainer with title, description, diagram area
-- Created constants/diagrams.ts with all 10 diagram definitions
-- Updated page.tsx to wire everything together with useState
-- Tests in tests/layout.test.mts
----
-
-## 2026-03-13 15:10 - US-004: Create base DiagramWrapper with React Flow, Minimap, and Controls
-- Created DiagramWrapper with ReactFlowProvider, ReactFlow, MiniMap, Controls, Background
-- Accepts initialNodes, initialEdges, nodeTypes, edgeTypes, title props
-- Uses useTheme for dark mode colorMode
-- Uses useNodesState/useEdgesState for interactivity
-- Created placeholderData.ts with 4 nodes and 4 edges
-- Tests in tests/diagram-wrapper.test.mts
----
-
-## 2026-03-13 15:26 - US-005: Implement Flowchart diagram with custom decision nodes
-- Created 4 custom node components in src/components/diagrams/flowchart/nodes/:
-  - StartNode: rounded green (emerald-500), source handle at bottom
-  - EndNode: rounded red (red-500), target handle at top
-  - DecisionNode: diamond shape (rotate-45 amber-400), target at top, source "yes" at bottom, source "no" at right
-  - ProcessNode: rectangle blue (blue-500), target at top, source at bottom
-- Created src/data/flowchart.ts with 13 nodes (1 start, 4 decisions, 7 processes, 1 end) and 16 edges
-  - Realistic deployment decision tree: tests → code review → merge → staging → deploy → monitor
-  - Yes/No labels with green/red coloring on decision edges
-  - Animated main path edges, dashed feedback loop edges
-- Created FlowchartDiagram component registering flowchartNodeTypes
-- Updated DiagramContainer with switch-based DiagramRenderer to route "flowchart" → FlowchartDiagram
-- 28 tests in tests/flowchart.test.mts covering data, nodes, component, integration, sidebar
-- All 159 tests pass, typecheck clean, build succeeds
-- Files changed: src/components/diagrams/flowchart/*, src/components/layout/DiagramContainer.tsx, src/data/flowchart.ts, tests/flowchart.test.mts
-- **Learnings:** Custom node types must be defined outside the component (or useMemo) to avoid infinite re-renders. Node data needs type casting since React Flow types data as Record<string, unknown>.
----
-
-## 2026-03-13 15:40 - US-006: Implement Architecture Diagram with service and database nodes
-- Created 4 custom node types in src/components/diagrams/architecture/nodes/:
-  - ServiceNode: rounded rectangle with icon display, tier-based color coding
-  - DatabaseNode: cylinder shape using top/bottom rounded ellipses
-  - APIGatewayNode: hexagonal shape via CSS clipPath polygon
-  - QueueNode: parallelogram shape via CSS clipPath polygon
-- Created src/data/architecture.ts with 14 nodes across 4 tiers
-- 15 edges with distinct styles (sync solid, async dashed, data arrows)
-- 37 tests in tests/architecture.test.mts
-- All 196 tests pass, typecheck clean, build succeeds
-- Commit: 58eedfe
----
-
-## 2026-03-13 15:55 - US-007: Implement Data Flow and Concept Map diagrams
-- Created 4 custom DataFlow node types, ConceptNode with category-based coloring
-- Created src/data/dataflow.ts (12 nodes, 13 edges) and src/data/conceptmap.ts (15 nodes, 18 edges)
-- 32 tests in tests/dataflow.test.mts, 30 tests in tests/conceptmap.test.mts
-- All 258 tests pass, typecheck clean, build succeeds
-- Commit: ae37612
----
-
-## 2026-03-13 16:15 - US-008: Implement Org Chart and Mind Map diagrams
-- Created OrgNode with avatar initials, level-based coloring (4 levels)
-- Created MindMapNode with depth-based sizing (3 depth levels)
-- Created src/data/orgchart.ts (16 nodes, 15 edges) and src/data/mindmap.ts (18 nodes, 17 edges)
-- 28 tests in tests/orgchart.test.mts, 30 tests in tests/mindmap.test.mts
-- All 316 tests pass, typecheck clean, build succeeds
-- Commit: 53ba367
----
-
-## 2026-03-13 16:38 - US-009: Implement State Machine and Network Topology diagrams
-- Created 3 custom State Machine node types in src/components/diagrams/statemachine/nodes/:
-  - StateNode: rounded-xl rectangle with label + description, indigo border, target+source handles
-  - InitialStateNode: filled circle (bg-zinc-900), source handle only — represents start state
-  - FinalStateNode: double circle (outer border-[3px] + inner filled circle), target handle only — represents end state
-- Created src/data/statemachine.ts with 12 nodes (1 initial, 9 regular, 2 final) and 14 edges
-  - Order lifecycle FSM: Start → Created → Confirmed → Processing → Shipped → In Transit → Delivered → Completed
-  - Alternative paths: Cancel (Created/Confirmed → Cancelled → Closed), Return (Delivered → Returned → Refunded → Closed)
-  - Retry path: In Transit → Shipped (delivery failed)
-  - Happy path edges: indigo animated smoothstep; cancel edges: red dashed; return edges: amber dashed
-- Created 5 custom Network Topology node types in src/components/diagrams/network/nodes/:
-  - ServerNode: rounded-lg with 🖥️ icon, zone-based coloring (internal/dmz/external), shows OS and CPU
-  - LoadBalancerNode: hexagonal shape via clipPath polygon, emerald coloring, shows algorithm
-  - ClientNode: rounded-full pill shape, violet coloring, dynamic icon from data
-  - FirewallNode: rounded-lg with 🔥 icon, red/warning styling, DMZ badge
-  - CloudNode: rounded-2xl with ☁️ icon, sky/blue coloring, shows provider name
-- Created src/data/network.ts with 14 nodes across 3 zones and 17 edges
-  - External zone: 3 clients (Web Browsers, Mobile Apps, API Consumers)
-  - DMZ zone: CDN (CloudFlare), WAF/Firewall
-  - Internal zone: 2 Load Balancers, 3 App Servers, 2 DB nodes (Primary + Replica), Object Storage (S3), Monitoring (Datadog)
-  - Edges with protocol labels: HTTPS, HTTP, TCP/5432, S3 API, metrics, logs, replication
-  - Animated edges for client→DMZ and DB replication; dashed for read replicas and monitoring
-- Wired both into DiagramContainer: "state-machine" → StateMachineDiagram, "network-topology" → NetworkTopologyDiagram
-- 45 tests in tests/statemachine.test.mts, 43 tests in tests/network.test.mts
-- All 404 tests pass, typecheck clean, build succeeds
-- Commit: 8c4f81c
-- Files changed: src/components/diagrams/statemachine/*, src/components/diagrams/network/*, src/components/layout/DiagramContainer.tsx, src/data/statemachine.ts, src/data/network.ts, tests/statemachine.test.mts, tests/network.test.mts
-- **Learnings:** Zone-based color lookups work well for network diagrams. Initial/final state nodes need directional handle constraints (source-only vs target-only) to enforce FSM semantics. Named handle IDs ("right", "left") enable non-standard edge routing like retry loops.
+## 2026-03-13 16:58 - US-010: Implement ER Diagram and Workflow/Pipeline diagrams
+- Created ER Diagram with 8 entity nodes (Users, Products, Categories, Orders, OrderItems, Reviews, Payments, Addresses)
+- EntityNode custom component shows table header with color, columns with name/type, PK/FK indicators
+- 9 relationship edges with cardinality labels (1:1, 1:N), color-coded by source entity
+- Created Workflow/Pipeline diagram with 14 nodes: CI/CD pipeline from Commit → Notify
+- 3 custom workflow node types: StageNode (color-coded by status), GateNode (diamond shape with lock icon), ParallelNode (dashed border with branch count)
+- StageNode has 4 status states (success/running/pending/failed) with distinct colors and icons
+- Parallel test execution with fork/join edge labels
+- Pending stages shown with dashed edges
+- Both diagrams wired into DiagramContainer switch
+- Wrote 83 tests across erdiagram.test.mts and workflow.test.mts — all pass
+- Build: ✅ | Typecheck: ✅ | Tests: 481/481 pass
+- Files changed: 14 files (2 data, 5 components, 1 barrel, 1 DiagramContainer update, 2 tests)
+- Commit: a02eaaf
+- **Learnings:** `satisfies` keyword works well for inline data typing in node data objects. Diamond shape achieved via CSS rotate(45deg) on inner div with relative z-index for content.
 ---

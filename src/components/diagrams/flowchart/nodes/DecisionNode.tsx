@@ -12,7 +12,7 @@ export function DecisionNode({ data }: NodeProps) {
   return (
     <div className="relative w-[160px] h-[160px] flex items-center justify-center">
       {/* Diamond shape via rotated square */}
-      <div className="absolute w-[120px] h-[120px] bg-amber-400 border-2 border-amber-500 shadow-lg rotate-45 rounded-md transition-shadow hover:shadow-xl" />
+      <div className="absolute w-[120px] h-[120px] bg-amber-400 border-2 border-amber-500 shadow-lg rotate-45 rounded-md transition-all duration-200 hover:shadow-xl hover:scale-105" />
       {/* Label (counter-rotated so text is readable) */}
       <span className="relative z-10 text-sm font-semibold text-amber-900 text-center px-2 max-w-[100px] leading-tight">
         {nodeData.label}

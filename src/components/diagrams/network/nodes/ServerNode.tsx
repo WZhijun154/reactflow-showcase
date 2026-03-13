@@ -30,7 +30,7 @@ export function ServerNode({ data }: NodeProps) {
   const colors = zoneColors[nodeData.zone] ?? zoneColors.internal;
 
   return (
-    <div className={`min-w-[140px] px-3 py-2.5 rounded-lg border-2 ${colors.border} bg-white dark:bg-zinc-800 shadow-md transition-all hover:shadow-lg hover:scale-105`}>
+    <div className={`min-w-[140px] px-3 py-2.5 rounded-lg border-2 ${colors.border} bg-white dark:bg-zinc-800 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105`}>
       <Handle
         type="target"
         position={Position.Top}

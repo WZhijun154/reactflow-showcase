@@ -52,7 +52,7 @@ export function ConceptNode({ data }: NodeProps) {
 
   return (
     <div
-      className={`rounded-full ${colors.bg} ${colors.border} border-2 shadow-md text-center transition-all hover:shadow-lg hover:scale-105 ${size}`}
+      className={`rounded-full ${colors.bg} ${colors.border} border-2 shadow-md text-center transition-all duration-200 hover:shadow-lg hover:scale-105 ${size}`}
     >
       <Handle
         type="target"

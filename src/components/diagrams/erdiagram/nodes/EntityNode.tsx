@@ -23,7 +23,7 @@ export function EntityNode({ data }: NodeProps) {
 
   return (
     <div
-      className="min-w-[220px] rounded-lg border-2 bg-white dark:bg-zinc-800 shadow-md transition-all hover:shadow-lg hover:scale-[1.02] overflow-hidden"
+      className="min-w-[220px] rounded-lg border-2 bg-white dark:bg-zinc-800 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-[1.02] overflow-hidden"
       style={{ borderColor }}
     >
       <Handle

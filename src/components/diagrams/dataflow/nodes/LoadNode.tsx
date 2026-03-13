@@ -12,7 +12,7 @@ export function LoadNode({ data }: NodeProps) {
   const nodeData = data as LoadNodeData;
 
   return (
-    <div className="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-950 border-2 border-green-400 dark:border-green-500 shadow-lg min-w-[150px] text-center transition-all hover:shadow-xl hover:scale-105">
+    <div className="px-4 py-3 rounded-xl bg-green-50 dark:bg-green-950 border-2 border-green-400 dark:border-green-500 shadow-lg min-w-[150px] text-center transition-all duration-200 hover:shadow-xl hover:scale-105">
       <Handle
         type="target"
         position={Position.Left}

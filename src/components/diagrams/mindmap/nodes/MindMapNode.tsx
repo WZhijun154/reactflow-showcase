@@ -43,7 +43,7 @@ export function MindMapNode({ data }: NodeProps) {
 
   return (
     <div
-      className={`rounded-full border-2 ${style.border} ${style.bg} ${style.size} shadow-md text-center transition-all hover:shadow-lg hover:scale-105`}
+      className={`rounded-full border-2 ${style.border} ${style.bg} ${style.size} shadow-md text-center transition-all duration-200 hover:shadow-lg hover:scale-105`}
     >
       <Handle
         type="target"

@@ -11,7 +11,7 @@ export function QueueNode({ data }: NodeProps) {
   const nodeData = data as QueueNodeData;
 
   return (
-    <div className="relative flex items-center justify-center min-w-[140px] transition-all hover:scale-105">
+    <div className="relative flex items-center justify-center min-w-[140px] transition-all duration-200 hover:scale-105 hover:drop-shadow-lg">
       <Handle
         type="target"
         position={Position.Top}

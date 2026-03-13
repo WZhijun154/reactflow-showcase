@@ -12,7 +12,7 @@ export function TransformNode({ data }: NodeProps) {
   const nodeData = data as TransformNodeData;
 
   return (
-    <div className="px-4 py-3 rounded-xl bg-amber-50 dark:bg-amber-950 border-2 border-amber-400 dark:border-amber-500 shadow-lg min-w-[150px] text-center transition-all hover:shadow-xl hover:scale-105">
+    <div className="px-4 py-3 rounded-xl bg-amber-50 dark:bg-amber-950 border-2 border-amber-400 dark:border-amber-500 shadow-lg min-w-[150px] text-center transition-all duration-200 hover:shadow-xl hover:scale-105">
       <Handle
         type="target"
         position={Position.Left}

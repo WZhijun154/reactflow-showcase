@@ -13,7 +13,7 @@ export function ClientNode({ data }: NodeProps) {
   const nodeData = data as ClientNodeData;
 
   return (
-    <div className="min-w-[120px] px-4 py-3 rounded-full border-2 border-violet-400 dark:border-violet-500 bg-violet-50 dark:bg-violet-950 shadow-md transition-all hover:shadow-lg hover:scale-105">
+    <div className="min-w-[120px] px-4 py-3 rounded-full border-2 border-violet-400 dark:border-violet-500 bg-violet-50 dark:bg-violet-950 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105">
       <div className="flex items-center justify-center gap-2">
         <span className="text-xl">{nodeData.icon ?? "👤"}</span>
         <span className="font-semibold text-sm text-zinc-800 dark:text-zinc-100">

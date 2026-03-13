@@ -10,7 +10,7 @@ interface EndNodeData {
 export function EndNode({ data }: NodeProps) {
   const nodeData = data as EndNodeData;
   return (
-    <div className="px-6 py-3 rounded-full bg-red-500 text-white font-semibold shadow-lg border-2 border-red-600 min-w-[100px] text-center transition-shadow hover:shadow-xl">
+    <div className="px-6 py-3 rounded-full bg-red-500 text-white font-semibold shadow-lg border-2 border-red-600 min-w-[100px] text-center transition-all duration-200 hover:shadow-xl hover:scale-105">
       <Handle
         type="target"
         position={Position.Top}

@@ -10,7 +10,7 @@ interface StartNodeData {
 export function StartNode({ data }: NodeProps) {
   const nodeData = data as StartNodeData;
   return (
-    <div className="px-6 py-3 rounded-full bg-emerald-500 text-white font-semibold shadow-lg border-2 border-emerald-600 min-w-[100px] text-center transition-shadow hover:shadow-xl">
+    <div className="px-6 py-3 rounded-full bg-emerald-500 text-white font-semibold shadow-lg border-2 border-emerald-600 min-w-[100px] text-center transition-all duration-200 hover:shadow-xl hover:scale-105">
       {nodeData.label}
       <Handle
         type="source"

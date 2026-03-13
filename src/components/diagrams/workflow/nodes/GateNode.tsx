@@ -22,7 +22,7 @@ export function GateNode({ data }: NodeProps) {
       <div className="w-[140px] h-[70px] relative flex items-center justify-center">
         {/* Diamond shape */}
         <div
-          className="absolute inset-0 border-2 border-amber-400 dark:border-amber-500 bg-amber-50 dark:bg-amber-950/40 shadow-md transition-all hover:shadow-lg"
+          className="absolute inset-0 border-2 border-amber-400 dark:border-amber-500 bg-amber-50 dark:bg-amber-950/40 shadow-md transition-all duration-200 hover:shadow-lg"
           style={{
             transform: "rotate(45deg)",
             borderRadius: "8px",
