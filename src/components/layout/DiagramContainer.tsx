@@ -2,10 +2,26 @@
 
 import type { DiagramDefinition } from "@/constants/diagrams";
 import { DiagramWrapper } from "@/components/diagrams/DiagramWrapper";
+import { FlowchartDiagram } from "@/components/diagrams/flowchart/FlowchartDiagram";
 import { placeholderNodes, placeholderEdges } from "@/constants/placeholderData";
 
 interface DiagramContainerProps {
   diagram: DiagramDefinition;
+}
+
+function DiagramRenderer({ diagramId }: { diagramId: string }) {
+  switch (diagramId) {
+    case "flowchart":
+      return <FlowchartDiagram />;
+    default:
+      return (
+        <DiagramWrapper
+          initialNodes={placeholderNodes}
+          initialEdges={placeholderEdges}
+          title="Placeholder"
+        />
+      );
+  }
 }
 
 export function DiagramContainer({ diagram }: DiagramContainerProps) {
@@ -26,11 +42,7 @@ export function DiagramContainer({ diagram }: DiagramContainerProps) {
       </div>
 
       <div className="flex-1 m-4 sm:m-6 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm transition-colors duration-200 overflow-hidden min-h-[400px]">
-        <DiagramWrapper
-          initialNodes={placeholderNodes}
-          initialEdges={placeholderEdges}
-          title={diagram.title}
-        />
+        <DiagramRenderer diagramId={diagram.id} />
       </div>
     </div>
   );

@@ -6,24 +6,22 @@ Started: 2026-03-13 14:40 GMT+8
 ## Codebase Patterns
 - **Framework:** Next.js 16 (App Router) with TypeScript, Tailwind CSS 4
 - **Tailwind setup:** Uses `@tailwindcss/postcss` plugin (v4 style), import via `@import "tailwindcss"` in globals.css
-- **Tailwind dark mode:** Uses `@custom-variant dark (&:where(.dark, .dark *))` in globals.css
 - **Static export:** `output: "export"` in next.config.ts, images must be `unoptimized: true`
 - **basePath:** `/reactflow-showcase` — all links and assets must account for this
 - **Google Fonts:** Removed — incompatible with static export. Use system fonts.
 - **React Flow:** `@xyflow/react` v12 — import from `@xyflow/react`, styles from `@xyflow/react/dist/style.css`
 - **React Flow client component:** Pages using ReactFlow MUST have `"use client"` directive
+- **DiagramWrapper pattern:** All diagrams use `<DiagramWrapper>` which provides ReactFlowProvider, MiniMap, Controls, Background (dots), fitView, dark mode colorMode, and animated default edges. Pass `initialNodes`, `initialEdges`, `nodeTypes`, `edgeTypes`, and `title`.
+- **Dark mode in React Flow:** Use `useTheme()` from ThemeProvider, map to `ColorMode` type, pass as `colorMode` prop to `<ReactFlow>`.
+- **React Flow hooks:** Use `useNodesState` and `useEdgesState` for interactive node/edge state management.
+- **Placeholder data:** `src/constants/placeholderData.ts` exports sample nodes/edges — replace per-diagram with real data in future stories.
+- **DiagramContainer:** Renders diagram title/description header + DiagramWrapper. No longer shows "coming soon" placeholder.
 - **Path alias:** `@/*` maps to `./src/*`
 - **Tests:** `node:test` runner with `.test.mts` files in `tests/` directory, run via `npm test`
 - **Typecheck:** `npx tsc --noEmit` or `npm run typecheck`
 - **Build:** `npm run build` → static output in `out/`
 - **Repo:** github.com/WZhijun154/reactflow-showcase
 - **Branch:** feature/reactflow-showcase
-- **Layout architecture:** Sidebar (desktop, md+) + MobileNav (mobile, <md) + DiagramContainer (main area)
-- **Component organization:** Layout components in `src/components/layout/`, constants in `src/constants/`
-- **State management:** React useState in page.tsx for active diagram; pass as props to Sidebar/MobileNav/DiagramContainer
-- **Diagram definitions:** All 10 diagram types defined in `src/constants/diagrams.ts` with id, title, description, icon
-- **Theme:** ThemeProvider in `src/app/providers/ThemeProvider.tsx`, ThemeToggle in `src/components/ThemeToggle.tsx`
-- **Responsive pattern:** `hidden md:flex` for desktop-only, `md:hidden` for mobile-only, `md:ml-64` for sidebar offset
 
 ---
 
@@ -41,24 +39,30 @@ Started: 2026-03-13 14:40 GMT+8
 - **Learnings:** Next.js 16 uses Turbopack for builds. Google font imports break static export — use system fonts instead.
 ---
 
-## 2026-03-13 14:51 - US-002: Add dark mode support with theme toggle
-- Created ThemeProvider with React Context, localStorage persistence, and prefers-color-scheme detection
-- Created ThemeToggle button with sun/moon SVG icons
-- Added @custom-variant dark directive for Tailwind v4 class-based dark mode
-- Layout wraps children in ThemeProvider with suppressHydrationWarning
-- Files changed: src/app/providers/ThemeProvider.tsx, src/components/ThemeToggle.tsx, src/app/globals.css, src/app/layout.tsx, src/app/page.tsx
----
-
-## 2026-03-13 15:05 - US-003: Build responsive layout with sidebar navigation and diagram container
-- Created `src/constants/diagrams.ts` with DiagramDefinition interface and 10 diagram entries (flowchart, architecture, data-flow, concept-map, org-chart, mind-map, state-machine, network-topology, er-diagram, workflow) — each with id, title, description, icon
-- Created `src/components/layout/Sidebar.tsx` — fixed sidebar (w-64) on desktop (md+), hidden on mobile, renders all 10 diagram types with icons, highlights active item with blue accent and aria-current, has nav landmark
-- Created `src/components/layout/MobileNav.tsx` — dropdown select visible only on mobile (<md), renders all diagram options with icons, labeled for accessibility
-- Created `src/components/layout/DiagramContainer.tsx` — shows selected diagram title, description, icon, and "coming soon" placeholder in a bordered container (min-h-[400px])
-- Updated `src/app/page.tsx` — replaced old sample ReactFlow diagram with new layout: Sidebar + main content area (md:ml-64) with header (ThemeToggle), MobileNav, and DiagramContainer; uses useState for activeDiagramId
-- Updated `tests/scaffold.test.mts` — adapted 2 tests that expected ReactFlow/Controls/MiniMap imports directly in page.tsx (now imports layout components instead)
-- Created `tests/layout.test.mts` — 41 tests covering: diagrams.ts exports (6), Sidebar component (8), MobileNav component (8), DiagramContainer component (6), main page integration (10), dark mode support in all layout components (3)
-- All dark mode classes applied to all new components
-- Build passes, typecheck passes, all 101 tests pass (0 failures)
-- Files changed: src/constants/diagrams.ts, src/components/layout/Sidebar.tsx, src/components/layout/MobileNav.tsx, src/components/layout/DiagramContainer.tsx, src/app/page.tsx, tests/layout.test.mts, tests/scaffold.test.mts
-- **Learnings:** When the page architecture changes (e.g., from inline ReactFlow to layout components), existing scaffold tests may break — update them to match the new structure.
+## 2026-03-13 15:16 - US-004: Create base DiagramWrapper with React Flow, Minimap, and Controls
+- Created `src/components/diagrams/DiagramWrapper.tsx`:
+  - Wraps ReactFlow with ReactFlowProvider
+  - Accepts props: initialNodes, initialEdges, nodeTypes, edgeTypes, title
+  - Renders MiniMap (zoomable, pannable) on every diagram
+  - Renders Controls (zoom in, zoom out, fit view) on every diagram
+  - Renders Background with BackgroundVariant.Dots pattern
+  - Enables fitView on initial render
+  - Reads theme via useTheme() and passes colorMode ("dark"/"light") to ReactFlow
+  - Sets defaultEdgeOptions with animated: true and strokeWidth: 2 for smooth animations
+  - Uses useNodesState/useEdgesState for interactive drag/connect
+  - Container fills available height with h-[calc(100vh-200px)] min-h-[400px]
+  - Imports @xyflow/react/dist/style.css for proper React Flow styling
+- Created `src/constants/placeholderData.ts` with sample 4-node, 4-edge graph
+- Updated `src/components/layout/DiagramContainer.tsx`:
+  - Now imports and renders DiagramWrapper instead of "coming soon" placeholder
+  - Passes placeholder data and diagram title to DiagramWrapper
+- Updated `tests/layout.test.mts` to expect DiagramWrapper instead of "coming soon"
+- Created `tests/diagram-wrapper.test.mts` with 30 tests covering:
+  - DiagramWrapper file existence and structure (17 tests)
+  - Placeholder data validation (5 tests)
+  - DiagramContainer integration (6 tests)
+  - Build/typecheck verification (2 tests)
+- All 131 tests pass, typecheck clean, build succeeds
+- Files changed: src/components/diagrams/DiagramWrapper.tsx, src/components/layout/DiagramContainer.tsx, src/constants/placeholderData.ts, tests/diagram-wrapper.test.mts, tests/layout.test.mts
+- **Learnings:** DiagramCanvas inner component must omit "title" from props when using Omit<> — passing it through causes TS2322. ReactFlow colorMode prop accepts "dark" | "light" directly.
 ---
