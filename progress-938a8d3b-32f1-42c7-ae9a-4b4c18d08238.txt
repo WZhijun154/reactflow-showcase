@@ -30,6 +30,9 @@ Started: 2026-03-13 14:40 GMT+8
 - **Level-based coloring:** Use a `levelColors` lookup object mapping hierarchy level numbers to `{ border, accent, avatar }` Tailwind class strings. Works for org charts and hierarchical diagrams.
 - **Avatar initials:** Use a `getInitials()` helper to extract first letters from a name for avatar placeholders.
 - **Depth-based sizing:** Use a `depthStyles` lookup mapping depth levels to `{ bg, border, text, size }` Tailwind class strings for nodes that decrease in size with depth (e.g., mind maps).
+- **Zone-based coloring:** Use a `zoneColors` lookup mapping zone names (external, dmz, internal) to `{ border, badge }` Tailwind class strings. Works for network diagrams with security zones.
+- **State machine node types:** Use distinct visual styles per state type: initial (filled circle, source-only handle), regular (rounded rectangle with label+description), final (double circle, target-only handle).
+- **Handle direction semantics:** Initial/start nodes have only source handles. Final/end nodes have only target handles. Regular nodes have both. Use named handle IDs (e.g., "right", "left") for non-standard edge routing.
 
 ---
 
@@ -93,85 +96,60 @@ Started: 2026-03-13 14:40 GMT+8
 
 ## 2026-03-13 15:40 - US-006: Implement Architecture Diagram with service and database nodes
 - Created 4 custom node types in src/components/diagrams/architecture/nodes/:
-  - ServiceNode: rounded rectangle with icon display, tier-based color coding (blue/green/orange/purple for frontend/backend/data/infrastructure), tier badge label
-  - DatabaseNode: cylinder shape using top/bottom rounded ellipses, orange color scheme, shows DB type (PostgreSQL, MongoDB, Redis)
-  - APIGatewayNode: hexagonal shape via CSS clipPath polygon, blue styling with 🌐 icon
-  - QueueNode: parallelogram shape via CSS clipPath polygon, purple styling with 📨 icon
-- Created src/data/architecture.ts with 14 nodes across 4 tiers:
-  - Infrastructure: API Gateway, Message Queue, Event Bus
-  - Frontend: Web App, Mobile BFF
-  - Backend: Auth Service, Product Service, Order Service, Payment Service, Notification Service
-  - Data: User DB (PostgreSQL), Product DB (MongoDB), Order DB (PostgreSQL), Redis Cache
-- 15 edges with distinct styles:
-  - Sync edges: solid lines with REST/gRPC labels and arrowclosed markers (green)
-  - Async edges: dashed lines (strokeDasharray) with async/subscribe labels (purple), animated
-  - Data edges: orange arrows to databases, dashed for cache connections
-- Created ArchitectureDiagram component registering architectureNodeTypes
-- Updated DiagramContainer with "architecture" case → ArchitectureDiagram
-- 37 tests in tests/architecture.test.mts covering data (12), custom nodes (16), component (5), integration (2), sidebar (2)
+  - ServiceNode: rounded rectangle with icon display, tier-based color coding
+  - DatabaseNode: cylinder shape using top/bottom rounded ellipses
+  - APIGatewayNode: hexagonal shape via CSS clipPath polygon
+  - QueueNode: parallelogram shape via CSS clipPath polygon
+- Created src/data/architecture.ts with 14 nodes across 4 tiers
+- 15 edges with distinct styles (sync solid, async dashed, data arrows)
+- 37 tests in tests/architecture.test.mts
 - All 196 tests pass, typecheck clean, build succeeds
 - Commit: 58eedfe
-- Files changed: src/components/diagrams/architecture/*, src/components/layout/DiagramContainer.tsx, src/data/architecture.ts, tests/architecture.test.mts
-- **Learnings:** CSS clipPath with polygon() is effective for non-rectangular node shapes (hexagons, parallelograms). Each node needs multiple handles (top/bottom/left/right) with named IDs for flexible edge routing. Tier-based color lookup objects keep styling consistent across nodes.
 ---
 
 ## 2026-03-13 15:55 - US-007: Implement Data Flow and Concept Map diagrams
-- Created 4 custom DataFlow node types in src/components/diagrams/dataflow/nodes/:
-  - SourceNode: blue rounded, shows format badge (CSV/JSON/SQL), source handle right
-  - TransformNode: amber rounded-xl with ⚙️ icon, shows operation badge, handles left/right/bottom
-  - LoadNode: green rounded-xl with 📥 icon, shows destination badge (Snowflake/ClickHouse)
-  - StorageNode: indigo cylinder shape with 🗄️ icon, shows storageType badge (S3/Metabase)
-- Created src/data/dataflow.ts with 12 nodes (3 sources, 5 transforms, 2 loads, 2 storage) and 13 edges
-  - ETL pipeline: CSV/API/DB sources → Parse → Validate → Deduplicate/Enrich → Aggregate → Warehouse/Analytics → Dashboard
-  - Animated directional edges showing data movement
-  - Gradient coloring: blue (source) → amber (transform) → green (load), indigo for storage
-  - Dashed edges for checkpoint/staging side-paths
-- Created ConceptNode in src/components/diagrams/conceptmap/nodes/:
-  - Rounded-full shape with varying sizes by importance (high=160px, medium=130px, low=100px)
-  - Category-based pastel colors: rose (core), sky (paradigm), violet (algorithm), emerald (application), amber (technique)
-  - 8 handles (4 target + 4 source at top/right/bottom/left) for flexible edge connections
-- Created src/data/conceptmap.ts with 15 nodes and 18 edges
-  - Machine Learning concepts: ML → Supervised/Unsupervised/Reinforcement → algorithms (Neural Networks, Decision Trees, SVM, Clustering, Deep Learning) → applications (NLP, Computer Vision, Recommendation Systems) + techniques (Feature Engineering, Cross-Validation, Transfer Learning)
-  - Bezier curve edges (default type) with relationship labels: includes, uses, enables, powers, requires, evaluated by, combined with
-  - Cross-connections between applications with dashed lines
-- Wired both into DiagramContainer: "data-flow" → DataFlowDiagram, "concept-map" → ConceptMapDiagram
+- Created 4 custom DataFlow node types, ConceptNode with category-based coloring
+- Created src/data/dataflow.ts (12 nodes, 13 edges) and src/data/conceptmap.ts (15 nodes, 18 edges)
 - 32 tests in tests/dataflow.test.mts, 30 tests in tests/conceptmap.test.mts
 - All 258 tests pass, typecheck clean, build succeeds
 - Commit: ae37612
-- Files changed: src/components/diagrams/dataflow/*, src/components/diagrams/conceptmap/*, src/components/layout/DiagramContainer.tsx, src/data/dataflow.ts, src/data/conceptmap.ts, tests/dataflow.test.mts, tests/conceptmap.test.mts
-- **Learnings:** Category-based color lookup objects (categoryColors) work well for concept maps with multiple topic categories. Importance-based size maps (importanceSizes) let you vary node prominence. Rounded-full nodes work best for concept maps, giving an organic bubble look.
 ---
 
 ## 2026-03-13 16:15 - US-008: Implement Org Chart and Mind Map diagrams
-- Created OrgNode custom component in src/components/diagrams/orgchart/nodes/:
-  - Card-like appearance with rounded-xl, shadow-lg, border-2
-  - Avatar placeholder showing initials (getInitials helper) in colored circle
-  - Displays name (label) and title with accent badge
-  - Level-based color coding: indigo (L0/CEO), violet (L1/VP), purple (L2/Director), fuchsia (L3/Manager)
-  - Dark mode support with dark: variants
-  - Hover effects: shadow-xl + scale-105
-- Created src/data/orgchart.ts with 16 nodes in 4 hierarchy levels:
-  - Level 0: CEO (Sarah Chen)
-  - Level 1: 3 VPs (Engineering, Product, Operations)
-  - Level 2: 6 Directors (Frontend, Backend, Design, PM, Infrastructure, HR)
-  - Level 3: 6 Managers/Team Leads (React, Mobile, API, Data, DevOps, SRE)
-  - 15 smoothstep edges connecting the hierarchy with purple-shade coloring
-- Created MindMapNode custom component in src/components/diagrams/mindmap/nodes/:
-  - Rounded-full pill shape, depth-based sizing: 160px (L0), 120px (L1), 90px (L2)
-  - Gradient background for central node (indigo→purple), white for L1, zinc-50 for L2
-  - Depth-based text sizing: text-base (L0), text-sm (L1), text-xs (L2)
-  - Color-coded handles by depth
-  - Dark mode and hover effects
-- Created src/data/mindmap.ts with 18 nodes:
-  - Central topic: "Web Development" (depth 0)
-  - 5 main branches (depth 1): Frontend, Backend, DevOps, Design, Testing
-  - 12 sub-topics (depth 2): React, CSS/Tailwind, TypeScript, Node.js, Databases, REST/GraphQL, Docker, CI/CD, UX Research, Figma, Unit Tests, E2E Tests
-  - 17 bezier (default) edges with color-coded strokes: blue (frontend), green (backend), amber (devops), pink (design), purple (testing)
-  - Thicker strokes (3) for main branches, thinner (2) for sub-branches
-- Wired both into DiagramContainer: "org-chart" → OrgChartDiagram, "mind-map" → MindMapDiagram
+- Created OrgNode with avatar initials, level-based coloring (4 levels)
+- Created MindMapNode with depth-based sizing (3 depth levels)
+- Created src/data/orgchart.ts (16 nodes, 15 edges) and src/data/mindmap.ts (18 nodes, 17 edges)
 - 28 tests in tests/orgchart.test.mts, 30 tests in tests/mindmap.test.mts
 - All 316 tests pass, typecheck clean, build succeeds
 - Commit: 53ba367
-- Files changed: src/components/diagrams/orgchart/*, src/components/diagrams/mindmap/*, src/components/layout/DiagramContainer.tsx, src/data/orgchart.ts, src/data/mindmap.ts, tests/orgchart.test.mts, tests/mindmap.test.mts
-- **Learnings:** Level-based color lookups (levelColors[number]) work well for hierarchical diagrams. getInitials() helper is reusable for avatar placeholders. Depth-based styling maps (depthStyles) with min-w, padding, and font-size let mind map nodes shrink naturally with depth.
+---
+
+## 2026-03-13 16:38 - US-009: Implement State Machine and Network Topology diagrams
+- Created 3 custom State Machine node types in src/components/diagrams/statemachine/nodes/:
+  - StateNode: rounded-xl rectangle with label + description, indigo border, target+source handles
+  - InitialStateNode: filled circle (bg-zinc-900), source handle only — represents start state
+  - FinalStateNode: double circle (outer border-[3px] + inner filled circle), target handle only — represents end state
+- Created src/data/statemachine.ts with 12 nodes (1 initial, 9 regular, 2 final) and 14 edges
+  - Order lifecycle FSM: Start → Created → Confirmed → Processing → Shipped → In Transit → Delivered → Completed
+  - Alternative paths: Cancel (Created/Confirmed → Cancelled → Closed), Return (Delivered → Returned → Refunded → Closed)
+  - Retry path: In Transit → Shipped (delivery failed)
+  - Happy path edges: indigo animated smoothstep; cancel edges: red dashed; return edges: amber dashed
+- Created 5 custom Network Topology node types in src/components/diagrams/network/nodes/:
+  - ServerNode: rounded-lg with 🖥️ icon, zone-based coloring (internal/dmz/external), shows OS and CPU
+  - LoadBalancerNode: hexagonal shape via clipPath polygon, emerald coloring, shows algorithm
+  - ClientNode: rounded-full pill shape, violet coloring, dynamic icon from data
+  - FirewallNode: rounded-lg with 🔥 icon, red/warning styling, DMZ badge
+  - CloudNode: rounded-2xl with ☁️ icon, sky/blue coloring, shows provider name
+- Created src/data/network.ts with 14 nodes across 3 zones and 17 edges
+  - External zone: 3 clients (Web Browsers, Mobile Apps, API Consumers)
+  - DMZ zone: CDN (CloudFlare), WAF/Firewall
+  - Internal zone: 2 Load Balancers, 3 App Servers, 2 DB nodes (Primary + Replica), Object Storage (S3), Monitoring (Datadog)
+  - Edges with protocol labels: HTTPS, HTTP, TCP/5432, S3 API, metrics, logs, replication
+  - Animated edges for client→DMZ and DB replication; dashed for read replicas and monitoring
+- Wired both into DiagramContainer: "state-machine" → StateMachineDiagram, "network-topology" → NetworkTopologyDiagram
+- 45 tests in tests/statemachine.test.mts, 43 tests in tests/network.test.mts
+- All 404 tests pass, typecheck clean, build succeeds
+- Commit: 8c4f81c
+- Files changed: src/components/diagrams/statemachine/*, src/components/diagrams/network/*, src/components/layout/DiagramContainer.tsx, src/data/statemachine.ts, src/data/network.ts, tests/statemachine.test.mts, tests/network.test.mts
+- **Learnings:** Zone-based color lookups work well for network diagrams. Initial/final state nodes need directional handle constraints (source-only vs target-only) to enforce FSM semantics. Named handle IDs ("right", "left") enable non-standard edge routing like retry loops.
 ---
