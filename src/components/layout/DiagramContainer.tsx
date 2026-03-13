@@ -8,6 +8,8 @@ import { DataFlowDiagram } from "@/components/diagrams/dataflow/DataFlowDiagram"
 import { ConceptMapDiagram } from "@/components/diagrams/conceptmap/ConceptMapDiagram";
 import { OrgChartDiagram } from "@/components/diagrams/orgchart/OrgChartDiagram";
 import { MindMapDiagram } from "@/components/diagrams/mindmap/MindMapDiagram";
+import { StateMachineDiagram } from "@/components/diagrams/statemachine/StateMachineDiagram";
+import { NetworkTopologyDiagram } from "@/components/diagrams/network/NetworkTopologyDiagram";
 import { placeholderNodes, placeholderEdges } from "@/constants/placeholderData";
 
 interface DiagramContainerProps {
@@ -28,6 +30,10 @@ function DiagramRenderer({ diagramId }: { diagramId: string }) {
       return <OrgChartDiagram />;
     case "mind-map":
       return <MindMapDiagram />;
+    case "state-machine":
+      return <StateMachineDiagram />;
+    case "network-topology":
+      return <NetworkTopologyDiagram />;
     default:
       return (
         <DiagramWrapper

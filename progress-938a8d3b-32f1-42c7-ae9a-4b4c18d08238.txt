@@ -27,6 +27,9 @@ Started: 2026-03-13 14:40 GMT+8
 - **Category coloring pattern:** Use a `categoryColors` lookup object mapping category names to `{ bg, border, text }` Tailwind classes. Works for concept maps, org charts, and other category-based diagrams.
 - **Importance/size-based styling:** Use an `importanceSizes` lookup mapping importance levels to Tailwind class strings for varying node sizes (min-w, padding, text-size).
 - **Barrel exports:** Each diagram's `nodes/` directory has an `index.ts` barrel file re-exporting all node components.
+- **Level-based coloring:** Use a `levelColors` lookup object mapping hierarchy level numbers to `{ border, accent, avatar }` Tailwind class strings. Works for org charts and hierarchical diagrams.
+- **Avatar initials:** Use a `getInitials()` helper to extract first letters from a name for avatar placeholders.
+- **Depth-based sizing:** Use a `depthStyles` lookup mapping depth levels to `{ bg, border, text, size }` Tailwind class strings for nodes that decrease in size with depth (e.g., mind maps).
 
 ---
 
@@ -137,4 +140,38 @@ Started: 2026-03-13 14:40 GMT+8
 - Commit: ae37612
 - Files changed: src/components/diagrams/dataflow/*, src/components/diagrams/conceptmap/*, src/components/layout/DiagramContainer.tsx, src/data/dataflow.ts, src/data/conceptmap.ts, tests/dataflow.test.mts, tests/conceptmap.test.mts
 - **Learnings:** Category-based color lookup objects (categoryColors) work well for concept maps with multiple topic categories. Importance-based size maps (importanceSizes) let you vary node prominence. Rounded-full nodes work best for concept maps, giving an organic bubble look.
+---
+
+## 2026-03-13 16:15 - US-008: Implement Org Chart and Mind Map diagrams
+- Created OrgNode custom component in src/components/diagrams/orgchart/nodes/:
+  - Card-like appearance with rounded-xl, shadow-lg, border-2
+  - Avatar placeholder showing initials (getInitials helper) in colored circle
+  - Displays name (label) and title with accent badge
+  - Level-based color coding: indigo (L0/CEO), violet (L1/VP), purple (L2/Director), fuchsia (L3/Manager)
+  - Dark mode support with dark: variants
+  - Hover effects: shadow-xl + scale-105
+- Created src/data/orgchart.ts with 16 nodes in 4 hierarchy levels:
+  - Level 0: CEO (Sarah Chen)
+  - Level 1: 3 VPs (Engineering, Product, Operations)
+  - Level 2: 6 Directors (Frontend, Backend, Design, PM, Infrastructure, HR)
+  - Level 3: 6 Managers/Team Leads (React, Mobile, API, Data, DevOps, SRE)
+  - 15 smoothstep edges connecting the hierarchy with purple-shade coloring
+- Created MindMapNode custom component in src/components/diagrams/mindmap/nodes/:
+  - Rounded-full pill shape, depth-based sizing: 160px (L0), 120px (L1), 90px (L2)
+  - Gradient background for central node (indigo→purple), white for L1, zinc-50 for L2
+  - Depth-based text sizing: text-base (L0), text-sm (L1), text-xs (L2)
+  - Color-coded handles by depth
+  - Dark mode and hover effects
+- Created src/data/mindmap.ts with 18 nodes:
+  - Central topic: "Web Development" (depth 0)
+  - 5 main branches (depth 1): Frontend, Backend, DevOps, Design, Testing
+  - 12 sub-topics (depth 2): React, CSS/Tailwind, TypeScript, Node.js, Databases, REST/GraphQL, Docker, CI/CD, UX Research, Figma, Unit Tests, E2E Tests
+  - 17 bezier (default) edges with color-coded strokes: blue (frontend), green (backend), amber (devops), pink (design), purple (testing)
+  - Thicker strokes (3) for main branches, thinner (2) for sub-branches
+- Wired both into DiagramContainer: "org-chart" → OrgChartDiagram, "mind-map" → MindMapDiagram
+- 28 tests in tests/orgchart.test.mts, 30 tests in tests/mindmap.test.mts
+- All 316 tests pass, typecheck clean, build succeeds
+- Commit: 53ba367
+- Files changed: src/components/diagrams/orgchart/*, src/components/diagrams/mindmap/*, src/components/layout/DiagramContainer.tsx, src/data/orgchart.ts, src/data/mindmap.ts, tests/orgchart.test.mts, tests/mindmap.test.mts
+- **Learnings:** Level-based color lookups (levelColors[number]) work well for hierarchical diagrams. getInitials() helper is reusable for avatar placeholders. Depth-based styling maps (depthStyles) with min-w, padding, and font-size let mind map nodes shrink naturally with depth.
 ---
