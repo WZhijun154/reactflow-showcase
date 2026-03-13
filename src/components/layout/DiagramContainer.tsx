@@ -4,6 +4,8 @@ import type { DiagramDefinition } from "@/constants/diagrams";
 import { DiagramWrapper } from "@/components/diagrams/DiagramWrapper";
 import { FlowchartDiagram } from "@/components/diagrams/flowchart/FlowchartDiagram";
 import { ArchitectureDiagram } from "@/components/diagrams/architecture/ArchitectureDiagram";
+import { DataFlowDiagram } from "@/components/diagrams/dataflow/DataFlowDiagram";
+import { ConceptMapDiagram } from "@/components/diagrams/conceptmap/ConceptMapDiagram";
 import { placeholderNodes, placeholderEdges } from "@/constants/placeholderData";
 
 interface DiagramContainerProps {
@@ -16,6 +18,10 @@ function DiagramRenderer({ diagramId }: { diagramId: string }) {
       return <FlowchartDiagram />;
     case "architecture":
       return <ArchitectureDiagram />;
+    case "data-flow":
+      return <DataFlowDiagram />;
+    case "concept-map":
+      return <ConceptMapDiagram />;
     default:
       return (
         <DiagramWrapper

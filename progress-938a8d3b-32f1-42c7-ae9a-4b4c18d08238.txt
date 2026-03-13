@@ -21,6 +21,9 @@ Started: 2026-03-13 14:40 GMT+8
 - **Custom node pattern:** Create `src/components/diagrams/<type>/nodes/` directory with individual node components. Each node receives `NodeProps` from `@xyflow/react` and uses `Handle` for connections. Register in a `nodeTypes` object (must be defined outside the component or memoized to avoid re-renders).
 - **Diagram data pattern:** Create `src/data/<type>.ts` exporting typed `Node[]` and `Edge[]` arrays. Use `type` field on nodes to match custom `nodeTypes` keys.
 - **Node type casting:** Node `data` prop is typed as `Record<string, unknown>`. Cast to a specific interface inside the component: `const nodeData = data as MyNodeData`.
+- **Custom shapes via CSS:** Use `clipPath` with `polygon()` for hexagons, parallelograms, etc. Use rounded ellipses (`rounded-[50%]`) for cylinder shapes. Tailwind `transition-all hover:scale-105` for hover effects.
+- **Edge styles:** Sync edges use solid `strokeWidth: 2` with color. Async edges add `strokeDasharray: "6 3"`. Use `markerEnd: { type: "arrowclosed", color }` for arrow markers.
+- **Tier-based coloring:** Use a `tierColors` lookup object mapping tier names to Tailwind class strings (bg, border, badge) for consistent color theming.
 
 ---
 
@@ -80,4 +83,28 @@ Started: 2026-03-13 14:40 GMT+8
 - All 159 tests pass, typecheck clean, build succeeds
 - Files changed: src/components/diagrams/flowchart/*, src/components/layout/DiagramContainer.tsx, src/data/flowchart.ts, tests/flowchart.test.mts
 - **Learnings:** Custom node types must be defined outside the component (or useMemo) to avoid infinite re-renders. Node data needs type casting since React Flow types data as Record<string, unknown>.
+---
+
+## 2026-03-13 15:40 - US-006: Implement Architecture Diagram with service and database nodes
+- Created 4 custom node types in src/components/diagrams/architecture/nodes/:
+  - ServiceNode: rounded rectangle with icon display, tier-based color coding (blue/green/orange/purple for frontend/backend/data/infrastructure), tier badge label
+  - DatabaseNode: cylinder shape using top/bottom rounded ellipses, orange color scheme, shows DB type (PostgreSQL, MongoDB, Redis)
+  - APIGatewayNode: hexagonal shape via CSS clipPath polygon, blue styling with 🌐 icon
+  - QueueNode: parallelogram shape via CSS clipPath polygon, purple styling with 📨 icon
+- Created src/data/architecture.ts with 14 nodes across 4 tiers:
+  - Infrastructure: API Gateway, Message Queue, Event Bus
+  - Frontend: Web App, Mobile BFF
+  - Backend: Auth Service, Product Service, Order Service, Payment Service, Notification Service
+  - Data: User DB (PostgreSQL), Product DB (MongoDB), Order DB (PostgreSQL), Redis Cache
+- 15 edges with distinct styles:
+  - Sync edges: solid lines with REST/gRPC labels and arrowclosed markers (green)
+  - Async edges: dashed lines (strokeDasharray) with async/subscribe labels (purple), animated
+  - Data edges: orange arrows to databases, dashed for cache connections
+- Created ArchitectureDiagram component registering architectureNodeTypes
+- Updated DiagramContainer with "architecture" case → ArchitectureDiagram
+- 37 tests in tests/architecture.test.mts covering data (12), custom nodes (16), component (5), integration (2), sidebar (2)
+- All 196 tests pass, typecheck clean, build succeeds
+- Commit: 58eedfe
+- Files changed: src/components/diagrams/architecture/*, src/components/layout/DiagramContainer.tsx, src/data/architecture.ts, tests/architecture.test.mts
+- **Learnings:** CSS clipPath with polygon() is effective for non-rectangular node shapes (hexagons, parallelograms). Each node needs multiple handles (top/bottom/left/right) with named IDs for flexible edge routing. Tier-based color lookup objects keep styling consistent across nodes.
 ---
