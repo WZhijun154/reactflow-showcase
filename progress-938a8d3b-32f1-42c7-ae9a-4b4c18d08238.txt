@@ -1,0 +1,55 @@
+# Progress Log
+Run: 938a8d3b-32f1-42c7-ae9a-4b4c18d08238
+Task: Build a React Flow showcase application
+Started: 2026-03-13 14:40 GMT+8
+
+## Codebase Patterns
+- **Framework:** Next.js 16 (App Router) with TypeScript, Tailwind CSS 4
+- **Tailwind setup:** Uses `@tailwindcss/postcss` plugin (v4 style), import via `@import "tailwindcss"` in globals.css
+- **Static export:** `output: "export"` in next.config.ts, images must be `unoptimized: true`
+- **basePath:** `/reactflow-showcase` — all links and assets must account for this
+- **Google Fonts:** Removed — incompatible with static export. Use system fonts.
+- **React Flow:** `@xyflow/react` v12 — import from `@xyflow/react`, styles from `@xyflow/react/dist/style.css`
+- **React Flow client component:** Pages using ReactFlow MUST have `"use client"` directive
+- **Path alias:** `@/*` maps to `./src/*`
+- **Tests:** `node:test` runner with `.test.mts` files in `tests/` directory, run via `npm test`
+- **Typecheck:** `npx tsc --noEmit` or `npm run typecheck`
+- **Build:** `npm run build` → static output in `out/`
+- **Repo:** github.com/WZhijun154/reactflow-showcase
+- **Branch:** feature/reactflow-showcase
+- **Diagram pattern:** Each diagram has: data file in `src/data/`, custom node components in `src/components/diagrams/<name>/nodes/` with barrel `index.ts`, main diagram component using `DiagramWrapper`, wired into `DiagramContainer.tsx` switch
+- **Node component pattern:** `"use client"`, import Handle/Position from @xyflow/react, interface for data, dark mode classes, hover effects (shadow + scale), handles for source/target
+- **Data file pattern:** Export typed `Node[]` and `Edge[]` arrays, use smoothstep edge type, color-coded edges, animated for active paths
+
+---
+
+## 2026-03-13 14:42 - US-001: Scaffold Next.js project with React Flow and Tailwind CSS
+- Configured next.config.ts: output: "export", basePath: "/reactflow-showcase", assetPrefix, unoptimized images
+- Replaced default layout.tsx — removed Google Fonts (breaks static export), added React Flow Showcase metadata
+- Created page.tsx as client component with sample ReactFlow diagram (3 nodes, 2 animated edges, Controls, MiniMap, Background)
+- Simplified globals.css with Tailwind v4 import and CSS custom properties for theming
+- Updated README.md with project overview, tech stack, setup instructions, and diagram types list
+- Added test and typecheck scripts to package.json
+- Created 29 scaffold verification tests in tests/scaffold.test.mts using node:test
+- Build verified: produces static export in /out directory
+- GitHub repo created: WZhijun154/reactflow-showcase, both main and feature branch pushed
+- Files changed: next.config.ts, package.json, src/app/globals.css, src/app/layout.tsx, src/app/page.tsx, README.md, tests/scaffold.test.mts
+- **Learnings:** Next.js 16 uses Turbopack for builds. Google font imports break static export — use system fonts instead.
+---
+
+## 2026-03-13 16:58 - US-010: Implement ER Diagram and Workflow/Pipeline diagrams
+- Created ER Diagram with 8 entity nodes (Users, Products, Categories, Orders, OrderItems, Reviews, Payments, Addresses)
+- EntityNode custom component shows table header with color, columns with name/type, PK/FK indicators
+- 9 relationship edges with cardinality labels (1:1, 1:N), color-coded by source entity
+- Created Workflow/Pipeline diagram with 14 nodes: CI/CD pipeline from Commit → Notify
+- 3 custom workflow node types: StageNode (color-coded by status), GateNode (diamond shape with lock icon), ParallelNode (dashed border with branch count)
+- StageNode has 4 status states (success/running/pending/failed) with distinct colors and icons
+- Parallel test execution with fork/join edge labels
+- Pending stages shown with dashed edges
+- Both diagrams wired into DiagramContainer switch
+- Wrote 83 tests across erdiagram.test.mts and workflow.test.mts — all pass
+- Build: ✅ | Typecheck: ✅ | Tests: 481/481 pass
+- Files changed: 14 files (2 data, 5 components, 1 barrel, 1 DiagramContainer update, 2 tests)
+- Commit: a02eaaf
+- **Learnings:** `satisfies` keyword works well for inline data typing in node data objects. Diamond shape achieved via CSS rotate(45deg) on inner div with relative z-index for content.
+---

@@ -1,0 +1,207 @@
+import type { Node, Edge } from "@xyflow/react";
+
+export const stateMachineNodes: Node[] = [
+  // Initial state
+  {
+    id: "sm-initial",
+    type: "initialState",
+    position: { x: 400, y: 0 },
+    data: { label: "Start" },
+  },
+  // Regular states
+  {
+    id: "sm-created",
+    type: "stateNode",
+    position: { x: 370, y: 100 },
+    data: { label: "Created", description: "Order placed by customer" },
+  },
+  {
+    id: "sm-confirmed",
+    type: "stateNode",
+    position: { x: 370, y: 220 },
+    data: { label: "Confirmed", description: "Payment verified" },
+  },
+  {
+    id: "sm-processing",
+    type: "stateNode",
+    position: { x: 370, y: 340 },
+    data: { label: "Processing", description: "Picking & packing items" },
+  },
+  {
+    id: "sm-shipped",
+    type: "stateNode",
+    position: { x: 370, y: 460 },
+    data: { label: "Shipped", description: "Handed to carrier" },
+  },
+  {
+    id: "sm-in-transit",
+    type: "stateNode",
+    position: { x: 370, y: 580 },
+    data: { label: "In Transit", description: "En route to destination" },
+  },
+  {
+    id: "sm-delivered",
+    type: "stateNode",
+    position: { x: 370, y: 700 },
+    data: { label: "Delivered", description: "Received by customer" },
+  },
+  {
+    id: "sm-cancelled",
+    type: "stateNode",
+    position: { x: 50, y: 340 },
+    data: { label: "Cancelled", description: "Order cancelled" },
+  },
+  {
+    id: "sm-returned",
+    type: "stateNode",
+    position: { x: 700, y: 580 },
+    data: { label: "Returned", description: "Customer initiated return" },
+  },
+  {
+    id: "sm-refunded",
+    type: "stateNode",
+    position: { x: 700, y: 700 },
+    data: { label: "Refunded", description: "Payment refunded" },
+  },
+  // Final states
+  {
+    id: "sm-completed",
+    type: "finalState",
+    position: { x: 400, y: 830 },
+    data: { label: "Completed" },
+  },
+  {
+    id: "sm-closed",
+    type: "finalState",
+    position: { x: 720, y: 830 },
+    data: { label: "Closed" },
+  },
+];
+
+export const stateMachineEdges: Edge[] = [
+  // Main happy path
+  {
+    id: "sm-e-start-created",
+    source: "sm-initial",
+    target: "sm-created",
+    label: "place order",
+    type: "smoothstep",
+    animated: true,
+    style: { stroke: "#6366f1", strokeWidth: 2 },
+  },
+  {
+    id: "sm-e-created-confirmed",
+    source: "sm-created",
+    target: "sm-confirmed",
+    label: "verify payment",
+    type: "smoothstep",
+    animated: true,
+    style: { stroke: "#6366f1", strokeWidth: 2 },
+  },
+  {
+    id: "sm-e-confirmed-processing",
+    source: "sm-confirmed",
+    target: "sm-processing",
+    label: "begin fulfillment",
+    type: "smoothstep",
+    animated: true,
+    style: { stroke: "#6366f1", strokeWidth: 2 },
+  },
+  {
+    id: "sm-e-processing-shipped",
+    source: "sm-processing",
+    target: "sm-shipped",
+    label: "dispatch",
+    type: "smoothstep",
+    animated: true,
+    style: { stroke: "#6366f1", strokeWidth: 2 },
+  },
+  {
+    id: "sm-e-shipped-transit",
+    source: "sm-shipped",
+    target: "sm-in-transit",
+    label: "carrier pickup",
+    type: "smoothstep",
+    animated: true,
+    style: { stroke: "#6366f1", strokeWidth: 2 },
+  },
+  {
+    id: "sm-e-transit-delivered",
+    source: "sm-in-transit",
+    target: "sm-delivered",
+    label: "delivery confirmed",
+    type: "smoothstep",
+    animated: true,
+    style: { stroke: "#6366f1", strokeWidth: 2 },
+  },
+  {
+    id: "sm-e-delivered-completed",
+    source: "sm-delivered",
+    target: "sm-completed",
+    label: "close order",
+    type: "smoothstep",
+    animated: true,
+    style: { stroke: "#10b981", strokeWidth: 2 },
+  },
+  // Cancel transitions
+  {
+    id: "sm-e-created-cancelled",
+    source: "sm-created",
+    target: "sm-cancelled",
+    label: "cancel",
+    type: "smoothstep",
+    style: { stroke: "#ef4444", strokeWidth: 2, strokeDasharray: "6 3" },
+  },
+  {
+    id: "sm-e-confirmed-cancelled",
+    source: "sm-confirmed",
+    target: "sm-cancelled",
+    label: "cancel",
+    type: "smoothstep",
+    style: { stroke: "#ef4444", strokeWidth: 2, strokeDasharray: "6 3" },
+  },
+  {
+    id: "sm-e-cancelled-closed",
+    source: "sm-cancelled",
+    target: "sm-closed",
+    label: "finalize",
+    type: "smoothstep",
+    style: { stroke: "#ef4444", strokeWidth: 2 },
+  },
+  // Return/refund transitions
+  {
+    id: "sm-e-delivered-returned",
+    source: "sm-delivered",
+    target: "sm-returned",
+    label: "initiate return",
+    type: "smoothstep",
+    style: { stroke: "#f59e0b", strokeWidth: 2, strokeDasharray: "6 3" },
+  },
+  {
+    id: "sm-e-returned-refunded",
+    source: "sm-returned",
+    target: "sm-refunded",
+    label: "process refund",
+    type: "smoothstep",
+    style: { stroke: "#f59e0b", strokeWidth: 2 },
+  },
+  {
+    id: "sm-e-refunded-closed",
+    source: "sm-refunded",
+    target: "sm-closed",
+    label: "close case",
+    type: "smoothstep",
+    style: { stroke: "#f59e0b", strokeWidth: 2 },
+  },
+  // Retry transition
+  {
+    id: "sm-e-transit-shipped",
+    source: "sm-in-transit",
+    target: "sm-shipped",
+    label: "delivery failed / retry",
+    type: "smoothstep",
+    sourceHandle: "right",
+    targetHandle: "right",
+    style: { stroke: "#8b5cf6", strokeWidth: 2, strokeDasharray: "6 3" },
+  },
+];
