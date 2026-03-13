@@ -1,6 +1,8 @@
 "use client";
 
 import type { DiagramDefinition } from "@/constants/diagrams";
+import { DiagramWrapper } from "@/components/diagrams/DiagramWrapper";
+import { placeholderNodes, placeholderEdges } from "@/constants/placeholderData";
 
 interface DiagramContainerProps {
   diagram: DiagramDefinition;
@@ -23,10 +25,12 @@ export function DiagramContainer({ diagram }: DiagramContainerProps) {
         </p>
       </div>
 
-      <div className="flex-1 m-4 sm:m-6 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm transition-colors duration-200 overflow-hidden flex items-center justify-center min-h-[400px]">
-        <p className="text-zinc-400 dark:text-zinc-500 text-lg font-medium">
-          Diagram: {diagram.title} coming soon
-        </p>
+      <div className="flex-1 m-4 sm:m-6 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm transition-colors duration-200 overflow-hidden min-h-[400px]">
+        <DiagramWrapper
+          initialNodes={placeholderNodes}
+          initialEdges={placeholderEdges}
+          title={diagram.title}
+        />
       </div>
     </div>
   );

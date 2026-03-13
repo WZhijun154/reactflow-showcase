@@ -216,11 +216,11 @@ describe("US-003: Responsive Layout with Sidebar Navigation", () => {
       );
     });
 
-    it("shows a placeholder for the diagram content", () => {
+    it("renders DiagramWrapper for the diagram content", () => {
       const source = readFileSync(containerPath, "utf-8");
       assert.ok(
-        source.includes("coming soon"),
-        "Should show 'coming soon' placeholder text"
+        source.includes("DiagramWrapper"),
+        "Should render DiagramWrapper component instead of placeholder"
       );
     });
 
